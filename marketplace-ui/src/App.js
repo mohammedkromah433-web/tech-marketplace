@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 // 1. Put the URL here
-const API_BASE_URL = "https://tech-marketplace-production.up.railway.app";
+const API_BASE_URL = "https://tech-marketplace-production.up.railway.app/api/products";
 
 function App() {
   // ... existing code ...
@@ -31,7 +31,7 @@ function App() {
     // Fetch data from your Railway Backend
       useEffect(() => {
         // Replace the URL below with the one you generated in Railway Settings
-        axios.get('https://tech-marketplace-production.up.railway.app')
+        axios.get('https://tech-marketplace-production.up.railway.app/api/products')
           .then(response => setProducts(response.data))
           .catch(error => console.error("Error:", error));
       }, []);
