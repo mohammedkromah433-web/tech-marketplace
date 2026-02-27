@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-// The URL for your Railway Backend
 const API_BASE_URL = "https://tech-marketplace-production.up.railway.app/api/products";
 
 function App() {
@@ -10,60 +9,52 @@ function App() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // 1. Fetch data from your Java Backend
   useEffect(() => {
     axios.get(API_BASE_URL)
-      .then(response => {
-        console.log("Data received:", response.data);
-        setProducts(response.data);
-      })
+      .then(response => setProducts(response.data))
       .catch(error => console.error("Error connecting to Railway:", error));
   }, []);
 
-  // 2. Logic to add/remove items
-  const addToCart = (product) => {
-    setCart([...cart, product]);
-  };
-
-  const removeFromCart = (indexToRemove) => {
-    setCart(cart.filter((_, index) => index !== indexToRemove));
-  };
-
+  const addToCart = (product) => setCart([...cart, product]);
+  const removeFromCart = (indexToRemove) => setCart(cart.filter((_, index) => index !== indexToRemove));
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
 
   return (
     <div style={{ backgroundColor: '#f4f7f6', minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
 
-      {/* NAVIGATION BAR */}
+      {/* 1. RESPONSIVE NAVIGATION BAR */}
       <nav style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         padding: '1rem 5%', backgroundColor: '#2c3e50', color: 'white',
-        position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+        position: 'sticky', top: 0, zIndex: 1000, boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        flexWrap: 'wrap' // Allows content to wrap on very small screens
       }}>
-        <h1 style={{ margin: 0, fontSize: '1.5rem' }}>🚀 TechStore</h1>
-        <div style={{ display: 'flex', gap: '25px', alignItems: 'center' }}>
-          <span style={{ cursor: 'pointer' }}>Home</span>
-          <span style={{ cursor: 'pointer' }}>Products</span>
+        <h1 style={{ margin: '0 10px 0 0', fontSize: 'clamp(1.2rem, 4vw, 1.5rem)' }}>🚀 MichaelTechStore</h1>
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          {/* Hide text links on very small screens to save space, or keep them compact */}
+          <span style={{ cursor: 'pointer', fontSize: '0.9rem', display: 'none', sm: 'block' }}>Products</span>
           <div
             onClick={() => setIsCartOpen(true)}
-            style={{ position: 'relative', cursor: 'pointer', fontSize: '1.5rem' }}
+            style={{ position: 'relative', cursor: 'pointer', fontSize: '1.5rem', marginLeft: '10px' }}
           >
             🛒 <span style={{
-              backgroundColor: '#e74c3c', borderRadius: '50%', padding: '2px 7px',
-              fontSize: '12px', position: 'absolute', top: '-10px', right: '-10px', color: 'white'
+              backgroundColor: '#e74c3c', borderRadius: '50%', padding: '2px 6px',
+              fontSize: '11px', position: 'absolute', top: '-8px', right: '-10px', color: 'white'
             }}>{cart.length}</span>
           </div>
         </div>
       </nav>
 
-      {/* MAIN CONTENT AREA */}
-      <div style={{ padding: '30px 5%' }}>
+      {/* 2. MAIN CONTENT AREA */}
+      <div style={{ padding: '20px 5%' }}>
+
+        {/* RESPONSIVE SEARCH BAR */}
         <div style={{ marginBottom: '30px', textAlign: 'center' }}>
           <input
             type="text"
             placeholder="Search for gadgets..."
             style={{
-              width: '100%', maxWidth: '600px', padding: '15px',
+              width: '100%', maxWidth: '600px', padding: '12px 20px',
               borderRadius: '30px', border: '1px solid #ddd',
               fontSize: '1rem', outline: 'none', boxShadow: '0 2px 5px rgba(0,0,0,0.05)'
             }}
@@ -71,35 +62,37 @@ function App() {
           />
         </div>
 
-        {/* PRODUCT GRID */}
+        {/* 3. SMART RESPONSIVE PRODUCT GRID */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '30px'
+          // auto-fill + minmax handles the resizing automatically
+          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+          gap: '25px',
+          justifyContent: 'center'
         }}>
           {products
-            .filter(product =>
-              product.name.toLowerCase().includes(searchTerm.toLowerCase())
-            )
+            .filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
             .map(product => (
               <div key={product.id} style={{
-                backgroundColor: 'white', padding: '20px', borderRadius: '15px',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.1)', textAlign: 'center',
-                display: 'flex', flexDirection: 'column', justifyContent: 'space-between'
+                backgroundColor: 'white', padding: '15px', borderRadius: '15px',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.08)', textAlign: 'center',
+                display: 'flex', flexDirection: 'column', transition: 'transform 0.2s'
               }}>
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  style={{ width: '100%', height: '180px', objectFit: 'cover', borderRadius: '10px' }}
-                />
-                <h3 style={{ margin: '15px 0 5px', color: '#333' }}>{product.name}</h3>
-                <p style={{ color: '#777', fontSize: '0.9rem', marginBottom: '15px' }}>{product.description}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                  <span style={{ fontSize: '1.3rem', fontWeight: 'bold', color: '#27ae60' }}>${product.price}</span>
+                <div style={{ width: '100%', height: '200px', overflow: 'hidden', borderRadius: '10px' }}>
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+                <h3 style={{ margin: '15px 0 5px', fontSize: '1.1rem', color: '#333' }}>{product.name}</h3>
+                <p style={{ color: '#777', fontSize: '0.85rem', marginBottom: '15px', flexGrow: 1 }}>{product.description}</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#27ae60' }}>${product.price}</span>
                   <button
                     onClick={() => addToCart(product)}
                     style={{
-                      padding: '8px 15px', backgroundColor: '#3498db', color: 'white',
+                      padding: '8px 12px', backgroundColor: '#3498db', color: 'white',
                       border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold'
                     }}
                   >
@@ -109,71 +102,3 @@ function App() {
               </div>
             ))
           }
-        </div>
-
-        {products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
-          <p style={{ textAlign: 'center', marginTop: '50px', color: '#888' }}>No products found matching "{searchTerm}"</p>
-        )}
-      </div>
-
-      {/* CART MODAL */}
-      {isCartOpen && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', justifyContent: 'center', alignItems: 'center'
-        }}>
-          <div style={{
-            backgroundColor: 'white', padding: '30px', borderRadius: '15px',
-            width: '90%', maxWidth: '500px', maxHeight: '80vh', overflowY: 'auto', position: 'relative'
-          }}>
-            <button
-              onClick={() => setIsCartOpen(false)}
-              style={{ position: 'absolute', top: '15px', right: '15px', border: 'none', background: 'none', fontSize: '1.5rem', cursor: 'pointer' }}
-            >✕</button>
-
-            <h2 style={{ borderBottom: '2px solid #eee', paddingBottom: '10px' }}>Your Shopping Cart</h2>
-
-            {cart.length === 0 ? (
-              <p>Your cart is empty!</p>
-            ) : (
-              <>
-                {cart.map((item, index) => (
-                  <div key={index} style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '10px 0', borderBottom: '1px solid #eee'
-                  }}>
-                    <div>
-                      <span style={{ fontWeight: '500' }}>{item.name}</span>
-                      <br />
-                      <small style={{ color: '#888' }}>${item.price.toFixed(2)}</small>
-                    </div>
-                    <button
-                      onClick={() => removeFromCart(index)}
-                      style={{
-                        backgroundColor: '#ff7675', color: 'white', border: 'none',
-                        borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', fontSize: '0.8rem'
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                <div style={{ marginTop: '20px', textAlign: 'right' }}>
-                  <h3>Total: ${cartTotal.toFixed(2)}</h3>
-                  <button style={{
-                    width: '100%', padding: '12px', backgroundColor: '#2ecc71', color: 'white',
-                    border: 'none', borderRadius: '8px', fontSize: '1.1rem', fontWeight: 'bold', cursor: 'pointer'
-                  }}>
-                    Checkout
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default App;
