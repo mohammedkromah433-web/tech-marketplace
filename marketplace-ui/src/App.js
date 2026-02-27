@@ -1,50 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-// 1. Put the URL here
+// The URL for your Railway Backend
 const API_BASE_URL = "https://tech-marketplace-production.up.railway.app/api/products";
 
 function App() {
-  // ... existing code ...
-
-  useEffect(() => {
-    // 2. Use the constant here
-    axios.get(`${API_BASE_URL}/api/products`)
-      .then(response => setProducts(response.data))
-      .catch(error => console.error("Error:", error));
-  }, []);
-
-  // ... rest of the code ...
-}
-function App() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [cart, setCart] = useState([]); // Added cart state
-  const removeFromCart = (indexToRemove) => {
-    // We use index instead of ID so we only remove ONE instance if they have 2 of the same item
-    setCart(cart.filter((_, index) => index !== indexToRemove));
-  };
+  const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Fetch data from your Java Backend
+  // 1. Fetch data from your Java Backend
   useEffect(() => {
-    // Fetch data from your Railway Backend
-      useEffect(() => {
-        // Replace the URL below with the one you generated in Railway Settings
-        axios.get('https://tech-marketplace-production.up.railway.app/api/products')
-          .then(response => setProducts(response.data))
-          .catch(error => console.error("Error:", error));
-      }, []);
+    axios.get(API_BASE_URL)
+      .then(response => {
+        console.log("Data received:", response.data);
+        setProducts(response.data);
+      })
+      .catch(error => console.error("Error connecting to Railway:", error));
+  }, []);
 
+  // 2. Logic to add/remove items
   const addToCart = (product) => {
     setCart([...cart, product]);
   };
-// This calculates the total price of everything in the cart
-const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+
+  const removeFromCart = (indexToRemove) => {
+    setCart(cart.filter((_, index) => index !== indexToRemove));
+  };
+
+  const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+
   return (
     <div style={{ backgroundColor: '#f4f7f6', minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
 
-      {/* 1. NAVIGATION BAR */}
+      {/* NAVIGATION BAR */}
       <nav style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         padding: '1rem 5%', backgroundColor: '#2c3e50', color: 'white',
@@ -54,9 +44,8 @@ const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
         <div style={{ display: 'flex', gap: '25px', alignItems: 'center' }}>
           <span style={{ cursor: 'pointer' }}>Home</span>
           <span style={{ cursor: 'pointer' }}>Products</span>
-          {/* Update your cart icon div to this: */}
           <div
-            onClick={() => setIsCartOpen(true)} // This opens the cart
+            onClick={() => setIsCartOpen(true)}
             style={{ position: 'relative', cursor: 'pointer', fontSize: '1.5rem' }}
           >
             🛒 <span style={{
@@ -64,18 +53,15 @@ const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
               fontSize: '12px', position: 'absolute', top: '-10px', right: '-10px', color: 'white'
             }}>{cart.length}</span>
           </div>
-
         </div>
       </nav>
 
-      {/* 2. MAIN CONTENT AREA */}
+      {/* MAIN CONTENT AREA */}
       <div style={{ padding: '30px 5%' }}>
-
-        {/* SEARCH BAR (Placed above the grid) */}
         <div style={{ marginBottom: '30px', textAlign: 'center' }}>
           <input
             type="text"
-            placeholder="Search for gadgets (e.g. Laptop, Mouse)..."
+            placeholder="Search for gadgets..."
             style={{
               width: '100%', maxWidth: '600px', padding: '15px',
               borderRadius: '30px', border: '1px solid #ddd',
@@ -85,7 +71,7 @@ const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
           />
         </div>
 
-        {/* 3. PRODUCT GRID */}
+        {/* PRODUCT GRID */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
@@ -125,12 +111,12 @@ const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
           }
         </div>
 
-        {/* MENTION IF NO PRODUCTS FOUND */}
         {products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 && (
           <p style={{ textAlign: 'center', marginTop: '50px', color: '#888' }}>No products found matching "{searchTerm}"</p>
         )}
       </div>
-      {/* CART MODAL OVERLAY */}
+
+      {/* CART MODAL */}
       {isCartOpen && (
         <div style={{
           position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
@@ -153,11 +139,8 @@ const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
               <>
                 {cart.map((item, index) => (
                   <div key={index} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '10px 0',
-                    borderBottom: '1px solid #eee'
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    padding: '10px 0', borderBottom: '1px solid #eee'
                   }}>
                     <div>
                       <span style={{ fontWeight: '500' }}>{item.name}</span>
