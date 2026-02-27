@@ -1,6 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+// 1. Put the URL here
+const API_BASE_URL = "https://tech-marketplace-production.up.railway.app";
+
+function App() {
+  // ... existing code ...
+
+  useEffect(() => {
+    // 2. Use the constant here
+    axios.get(`${API_BASE_URL}/api/products`)
+      .then(response => setProducts(response.data))
+      .catch(error => console.error("Error:", error));
+  }, []);
+
+  // ... rest of the code ...
+}
 function App() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,10 +28,13 @@ function App() {
 
   // Fetch data from your Java Backend
   useEffect(() => {
-    axios.get('http://10.246.8.40:8080/api/products')
-      .then(response => setProducts(response.data))
-      .catch(error => console.error("Error:", error));
-  }, []);
+    // Fetch data from your Railway Backend
+      useEffect(() => {
+        // Replace the URL below with the one you generated in Railway Settings
+        axios.get('https://tech-marketplace-production.up.railway.app')
+          .then(response => setProducts(response.data))
+          .catch(error => console.error("Error:", error));
+      }, []);
 
   const addToCart = (product) => {
     setCart([...cart, product]);
