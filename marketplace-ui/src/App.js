@@ -115,7 +115,24 @@ function App() {
         </div>
       )}
 
-      {/* CART MODAL (Same as before) */}
+      {/* CART MODAL */}
       {isCartOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 2000, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '15px', width: '9
+          <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '15px', width: '90%', maxWidth: '450px', maxHeight: '80vh', overflowY: 'auto', position: 'relative' }}>
+            <button onClick={() => setIsCartOpen(false)} style={{ position: 'absolute', top: '15px', right: '15px', border: 'none', background: 'none', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
+            <h2>Cart Total: ${cartTotal.toFixed(2)}</h2>
+            {cart.map((item, index) => (
+              <div key={index} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #eee' }}>
+                <span>{item.name}</span>
+                <button onClick={() => removeFromCart(index)} style={{ color: 'red', border: 'none', background: 'none', cursor: 'pointer' }}>Remove</button>
+              </div>
+            ))}
+            <button onClick={() => setIsCartOpen(false)} style={{ marginTop: '20px', width: '100%', padding: '10px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>Close</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
