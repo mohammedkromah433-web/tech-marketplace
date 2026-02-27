@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const API_BASE_URL = "https://tech-marketplace-production.up.railway.app/api";
-const ADMIN_EMAIL = "your-email@example.com"; // 👈 CHANGE THIS TO YOUR EMAIL
+const ADMIN_EMAIL = "mohammedkromah433@gmail.com"; // 👈 CHANGE THIS TO YOUR EMAIL
 
 function App() {
   const [products, setProducts] = useState([]);
